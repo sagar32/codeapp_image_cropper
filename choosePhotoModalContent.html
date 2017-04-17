@@ -44,7 +44,7 @@
                             <!--<image-cropper image-url="{{ files[0] | convertToSrc}}"-->
                             <!--<image-cropper ng-if="showImg" image-url="{{imgBase64}}" width="640" height="480" show-controls="{{vm.showControls}}" fit-on-init="false"
                                 center-on-init="true" api="vm.cropperApi" crop-callback="vm.updateResultImage" action-labels="vm.myButtonLabels"></image-cropper>-->
-                                <codeapp-image-cropper ng-if="showImg" image-url="{{imgBase64}}" api="codeAppCroper" ></codeapp-image-cropper>
+                            <codeapp-image-cropper ng-if="showImg" image-url="{{imgBase64}}" api="codeAppCroper"></codeapp-image-cropper>
 
                             <div class="result">
                                 <img class="frame" ng-src="{{resultImage}}">
@@ -67,7 +67,7 @@
                 <div>
                     <ul class="list-inline" style="display: inline-block; text-align: center">
                         <li dir-paginate="c in todos |  itemsPerPage: mostPics" class="alb-thumbnail" style="height: 74px; width:120px">
-                            <span ng-click="delete(c.id)">Delete</span><img class="img-responsive" src="{{c.cropImage}}"
+                            <span ng-click="deleteTodo(c.id)">Delete</span><img class="img-responsive" src="{{c.cropImage}}"
                                 style="margin: auto; height: 64px; display:inline-block" ng-click="setPicToUseByCodeApp(c.id,c.originalImage,c.cropImage);">
                         </li>
                     </ul>
@@ -102,14 +102,16 @@
                 <div id="imageSizer" ng-style="{'max-width':maxWidth+'px','max-height':(maxWidth/ratio)+'px'}" style=" margin: auto; padding:10px;position: absolute; top: 0; left: 0; bottom: 0; right: 0; width:100%;height:0;box-sizing:content-box">
                     <div class="" style="width:100%; height:100%;">
                         <button class="btn btn-success" ng-click="setOrignal()">Use {{ isSetOrignal?'Crop Image':'Original Image'}}</button>
-                        <image-cropper ng-if="showImg" image-url="{{imgBase64selected}}" width="640" height="480" show-controls="{{vm.showControls}}"
-                            fit-on-init="false" center-on-init="true" api="vm.cropperApi" crop-callback="updateResultImage" action-labels="myButtonLabels"></image-cropper>
+                        <!--<image-cropper ng-if="showImg" image-url="{{imgBase64selected}}" width="640" height="480" show-controls="{{vm.showControls}}"
+                            fit-on-init="false" center-on-init="true" api="vm.cropperApi" crop-callback="updateResultImage" action-labels="myButtonLabels"></image-cropper>-->
+                        <codeapp-image-cropper ng-if="showImgSelected" image-url="{{imgBase64selected}}" api="codeAppCroper"></codeapp-image-cropper>
+
                         <!--<pan-zoom id="panZoomer" ng-model="pzer" image-width="actWidth" image-height="actHeight" image-blug="picToUse.Value" upload-function="getCrop"></pan-zoom>-->
                         <div class="result">
                             <img class="frame" ng-src="{{resultImageSelect}}">
                         </div>
                         <div ng-show="showMode=='Selected'" class="pull-right" style="margin-bottom:10px">
-                            <button class="btn btn-primary" ng-click="UpdateImage(currId,resultImageSelect)">
+                            <button class="btn btn-primary" ng-click="UpdateImageAbhay(currId);setView();">
             <span ng-show="!isLoading">Use Picture 1</span>
             <img ng-if="isLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
         </button>

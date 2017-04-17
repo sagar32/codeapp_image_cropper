@@ -39,7 +39,7 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
     //sagar
 
     $scope.showImg = false;
-    $scope.codeappCropperAPI="";
+    $scope.codeappCropperAPI = "";
     $scope.chnageFile = function () {
         $scope.showImg = false;
         var file = $scope.userFile;
@@ -56,19 +56,21 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
         if (file) {
             reader.readAsDataURL(file);
         }
-
     };
 
     $scope.codeAppCroper = function (codeappCropper) {
-        console.log(codeappCropper);
         $scope.codeappCropperAPI = codeappCropper;
-        //   $scope.$apply();
     }
     $scope.UseImage = function () {
         var resultImage = $scope.codeappCropperAPI.crop();
-        console.log(resultImage);
-        indexedDBDataSvc.addTodo($scope.imgBase64, resultImage).then(function () {
-
+        indexedDBDataSvc.addTodo($scope.imgBase64, resultImage).then(function() {
+        }, function (err) {
+            $window.alert(err);
+        });
+    }
+    $scope.UpdateImageAbhay = function (id) {
+        var resultImage = $scope.codeappCropperAPI.crop(); 
+        indexedDBDataSvc.updateResult(id, resultImage).then(function() {
         }, function (err) {
             $window.alert(err);
         });
@@ -77,7 +79,50 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
 
     //abhay
 
+    $scope.todos = [];
 
+    $scope.refreshList = function () {
+        indexedDBDataSvc.getTodos().then(function (data) {
+            $scope.todos = data;
+        }, function (err) {
+            $window.alert(err);
+        });
+    };
+
+
+    $scope.addTodo = function () {
+        indexedDBDataSvc.addTodo($scope.todoText).then(function () {
+            $scope.refreshList();
+            $scope.todoText = "";
+            $scope.todoText.focus();
+        }, function (err) {
+            $window.alert(err);
+        });
+    };
+
+    $scope.deleteTodo = function (id) {
+        indexedDBDataSvc.deleteTodo(id).then(function () {
+            $scope.refreshList();
+        }, function (err) {
+            $window.alert(err);
+        });
+    };
+
+    // $scope.UpdateImage = function (id) {
+    //     indexedDBDataSvc.deleteTodo(id).then(function () {
+    //         $scope.refreshList();
+    //     }, function (err) {
+    //         $window.alert(err);
+    //     });
+    // };
+
+    function init() {
+        indexedDBDataSvc.open().then(function () {
+            $scope.refreshList();
+        });
+    }
+
+    init();
 
 
     $scope.showMode = 'Upload';
@@ -93,19 +138,17 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
         }
     });
 
-
-
-
-
-
-
     $scope.setView = function () {
-        console.log("TTTT");
         $scope.showMode = 'Select';
-        $rootScope.getImgFormDB();
+        $scope.refreshList();
         $scope.getProfileContent();
-        //angular.element('#myselector').triggerHandler('click');
     }
+	
+	$scope.clear = function(){
+		$scope.showImg = false;
+		$scope.userFile = null;	
+			
+	}
 
     function setSizes() {
 
@@ -194,7 +237,6 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
     angular.element($window).on('resize', function () {
         setSizes();
     });
-    //$scope.selectInviteCircles = false;
 
     $scope.getProfileContent = function () {
         $scope.contents.length = 0
@@ -202,16 +244,17 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
             angular.forEach(response, function (value, key) {
                 $scope.contents.push(value);
             })
-            console.log($scope.contents);
+           // console.log($scope.contents);
         });
     };
+
     $scope.setPicToUse = function (photoId) {
         $scope.picToUse = photoId;
         $scope.showMode = 'Selected';
     }
-
+    $scope.showImgSelected = false;
     $scope.setPicToUseByCodeApp = function (id, images, cropImg) {
-        $scope.showImg = false;
+        $scope.showImgSelected = false;
         $scope.imgBase64selected = "";
         $scope.currId = id;
         $timeout(function () {
@@ -219,15 +262,16 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
             $scope.imgBase64selected = cropImg;
             $scope.imgBase64Orignal = images;
             $scope.imgBase64crop = cropImg;
-            $scope.showImg = true;
+            $scope.showImgSelected = true;
             $scope.showMode = 'Selected';
         }, 200);
 
     }
 
     $scope.isSetOrignal = false;
+
     $scope.setOrignal = function () {
-        $scope.showImg = false;
+        $scope.showImgSelected = false;
         $scope.isSetOrignal = !$scope.isSetOrignal;
         $timeout(function () {
             if ($scope.isSetOrignal) {
@@ -236,13 +280,10 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
                 $scope.imgBase64selected = $scope.imgBase64crop;
             }
 
-            $scope.showImg = true;
+            $scope.showImgSelected = true;
             $scope.showMode = 'Selected';
         }, 200);
     }
-
-
-
 
     $scope.myButtonLabels = {
         rotateLeft: ' (rotate left) ',
@@ -253,14 +294,11 @@ app.controller("choosePhotoModalController", ['$scope', "$uibModalInstance", '$u
         crop: ' [crop] '
     };
 
-    $scope.updateResultImage = function (base64) {
+    $scope.UpdateImage = function (base64) {
 
         $scope.resultImageSelect = base64;
         $scope.$apply(); // Apply the changes.
         indexedDBDataSvc.addTodo(base64).then(function () {
-            // vm.refreshList();
-            // vm.todoText = "";
-            // vm.todoText.focus();
         }, function (err) {
             $window.alert(err);
         });
